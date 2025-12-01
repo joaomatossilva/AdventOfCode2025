@@ -35,7 +35,7 @@ foreach (string line in lines)
     //adjust negative    
     if (dial < 0)
     {
-        if (dial > -1* (rotation % 100))
+        if (dial > -1* rotation)
         {
             extraTurns ++;
         }
@@ -50,7 +50,7 @@ foreach (string line in lines)
         password++;
     }
     
-    Console.WriteLine($"{numbers.Groups[1].Value}{numbers.Groups[2].Value} => {dial} {extraTurns} {password}");
+    //Console.WriteLine($"{numbers.Groups[1].Value}{numbers.Groups[2].Value} => {dial} {extraTurns} {password}");
 }
 
 Console.WriteLine(password);
