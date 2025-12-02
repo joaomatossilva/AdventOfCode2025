@@ -32,39 +32,42 @@ foreach (var rangeString in ranges)
     }
 }
 
-static bool IsMatch(ReadOnlySpan<char> number)
-{
-    // for each possible lenght of sequences (1 to half the lenght of number)
-    for (int i = 1; i <= number.Length / 2; i++)
-    {
-        //if number can't be divided in equal parts, continue
-        if (number.Length % i != 0)
-        {
-            continue;
-        }
-        
-        var needle = number.Slice(0, i);
-        //match until the end
-        int offset = i;
-        do
-        {
-            var test =  number.Slice(offset, i);
-            if (!test.SequenceEqual(needle))
-            {
-                break;
-            }
+// static bool IsMatch(ReadOnlySpan<char> number)
+// {
+//     // for each possible lenght of sequences (1 to half the lenght of number)
+//     for (int i = 1; i <= number.Length / 2; i++)
+//     {
+//         //if number can't be divided in equal parts, continue
+//         if (number.Length % i != 0)
+//         {
+//             continue;
+//         }
+//         
+//         var needle = number.Slice(0, i);
+//         //match until the end
+//         int offset = i;
+//         do
+//         {
+//             var test =  number.Slice(offset, i);
+//             if (!test.SequenceEqual(needle))
+//             {
+//                 break;
+//             }
+//
+//             offset += i;
+//             
+//             //if we matched all number, we got a positive
+//             if (offset >= number.Length)
+//             {
+//                 return true;
+//             }
+//         } while(offset < number.Length);
+//     }
+//     return false;
+// }
 
-            offset += i;
-            
-            //if we matched all number, we got a positive
-            if (offset >= number.Length)
-            {
-                return true;
-            }
-        } while(offset < number.Length);
-    }
-    return false;
-}
+//alternative answer
+static bool IsMatch(ReadOnlySpan<char> number) => GetPattern().IsMatch(number);
 
 Console.WriteLine(sum);
 
@@ -73,4 +76,7 @@ partial class Program
 {
     [GeneratedRegex("([0-9]+)-([0-9]+)")]
     private static partial Regex GetRanges();
+
+    [GeneratedRegex("^(\\d+?)\\1+$")]
+    private static partial Regex GetPattern();
 }
