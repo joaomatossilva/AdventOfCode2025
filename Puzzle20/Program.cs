@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-//Runs in 00:38:44.3712667 - Answer too high
+//Runs in 00:11:23.4632736 - Fixed issue caused by truncating max times
 
 
 using System.Diagnostics;
@@ -143,7 +143,7 @@ record Machine(int[] Joltage, int[][] Switches)
             return null;
         }
 
-        int maxTimes = 200;
+        int maxTimes = 400;
         for (var index = 0; index < Switches[switchIndex].Length; index++)
         {
             var switches = Switches[switchIndex][index];
@@ -168,30 +168,31 @@ record Machine(int[] Joltage, int[][] Switches)
         {
             return null;
         }
-        
-        for (int time = 0; time <= maxTimes; time++)
+
+        if (minSkipTimes > 0)
         {
-
-            if (time > 0) //time == 0 we don't press this button
+            int a = 1;
+        }
+        
+        if(minSkipTimes > 0)
+            joltages = Subtract(joltages, Switches[switchIndex], minSkipTimes);
+        
+        for (int time = minSkipTimes; time <= maxTimes; time++)
+        {
+            
+            var attempt = SolveRecursive(joltages, switchIndex + 1, lastChanceJoltages, deep + time, toBeat);
+            if (attempt != null && (toBeat == null || attempt.Value < toBeat.Value))
             {
-                joltages = Subtract(joltages, Switches[switchIndex]);
+                toBeat = attempt;
             }
-
-            //we skip until time is to consider, usually on the last switch to speed it
-            if (time >= minSkipTimes)
-            {
-                var attempt = SolveRecursive(joltages, switchIndex + 1, lastChanceJoltages, deep + time, toBeat);
-                if (attempt != null && (toBeat == null || attempt.Value < toBeat.Value))
-                {
-                    toBeat = attempt;
-                }
-            }
+            
+            joltages = Subtract(joltages, Switches[switchIndex], 1);
         }
 
         return toBeat;
     }
     
-    static int[] Subtract(int[] joltages, int[] switches)
+    static int[] Subtract(int[] joltages, int[] switches, int times)
     {
         var newJoltages = new int[joltages.Length];
         int indexSwitch = 0;
@@ -200,7 +201,7 @@ record Machine(int[] Joltage, int[][] Switches)
             newJoltages[i] = joltages[i];
             if (indexSwitch >= 0 && switches[indexSwitch] == i)
             {
-                newJoltages[i]--;
+                newJoltages[i] -= times;
                 indexSwitch++;
                 if (indexSwitch >= switches.Length)
                 {
